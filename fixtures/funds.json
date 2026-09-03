@@ -1,0 +1,42 @@
+[
+  {
+    "object": "fund",
+    "id": 1,
+    "fund_id": "President's Fund",
+    "remaining_balance": 48000,
+    "fund_type": "Unrestricted",
+    "is_endowed": false
+  },
+  {
+    "object": "fund",
+    "id": 2,
+    "fund_id": "STEM Excellence Endowment",
+    "remaining_balance": 125500,
+    "fund_type": "Restricted",
+    "is_endowed": true
+  },
+  {
+    "object": "fund",
+    "id": 3,
+    "fund_id": "First-Gen Founders Fund",
+    "remaining_balance": 31200,
+    "fund_type": "Restricted",
+    "is_endowed": true
+  },
+  {
+    "object": "fund",
+    "id": 4,
+    "fund_id": "Annual Fund",
+    "remaining_balance": 12750,
+    "fund_type": "Unrestricted",
+    "is_endowed": false
+  },
+  {
+    "object": "fund",
+    "id": 5,
+    "fund_id": "Rodriguez Memorial Fund",
+    "remaining_balance": 64000,
+    "fund_type": "Restricted",
+    "is_endowed": true
+  }
+]

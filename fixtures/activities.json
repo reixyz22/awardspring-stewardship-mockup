@@ -1,0 +1,38 @@
+[
+  {
+    "object": "donor_activity",
+    "id": 1,
+    "donor_id": 1,
+    "source": "Logged",
+    "activity_type": "LoggedMeeting",
+    "subject": "Campus visit",
+    "description": "Toured the engineering labs with two scholarship recipients.",
+    "date": 1772625600,
+    "amount": null,
+    "fund_id": null,
+    "is_completed": true,
+    "gift_acknowledgement_sent": false,
+    "gift_type": null,
+    "campaign_id": null,
+    "assigned_to_user_id": null,
+    "sender_name": null
+  },
+  {
+    "object": "donor_activity",
+    "id": 2,
+    "donor_id": 3,
+    "source": "Logged",
+    "activity_type": "LoggedEmail",
+    "subject": "Thank you \u2014 2026 cycle",
+    "description": "Sent acknowledgement for spring gift.",
+    "date": 1780401600,
+    "amount": null,
+    "fund_id": null,
+    "is_completed": true,
+    "gift_acknowledgement_sent": true,
+    "gift_type": null,
+    "campaign_id": null,
+    "assigned_to_user_id": null,
+    "sender_name": null
+  }
+]

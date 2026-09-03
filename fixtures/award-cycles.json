@@ -1,0 +1,24 @@
+[
+  {
+    "object": "award_cycle",
+    "id": 1,
+    "name": "2025-2026 Award Cycle",
+    "is_current": false,
+    "is_next": false,
+    "application_start_date": 1736164800,
+    "application_end_date": 1741953600,
+    "review_start_date": 1742212800,
+    "review_end_date": 1745582400
+  },
+  {
+    "object": "award_cycle",
+    "id": 2,
+    "name": "2026-2027 Award Cycle",
+    "is_current": true,
+    "is_next": false,
+    "application_start_date": 1767614400,
+    "application_end_date": 1773403200,
+    "review_start_date": 1773662400,
+    "review_end_date": 1777032000
+  }
+]

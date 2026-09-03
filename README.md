@@ -72,6 +72,7 @@ Most of what is usually kept private is committed here on purpose.
 - **[`SPEC.md`](SPEC.md)** — what to build and why, written before any code. Including the parts that were cut.
 - **[`CLAUDE.md`](CLAUDE.md)** — the actual instructions given to Claude Code, unedited. Nearly all of this repo is AI-generated, and the interesting artifact is the constraints, not the output.
 - **[`docs/awardspring-api-notes.md`](docs/awardspring-api-notes.md)** — working notes compiled from all 30 pages of their public documentation, including two places where their own docs contradict each other.
+- **[`docs/openapi.json`](docs/openapi.json)** — their published OpenAPI 3.1 spec, vendored unmodified so the types and the mock have a single source of truth. Fetched 2026-09-02.
 - **[`docs/DECISIONS.md`](docs/DECISIONS.md)** — running log of decisions and the reasoning, including the wrong turns.
 
 Only secrets and build output are ignored. See [`.gitignore`](.gitignore).
@@ -79,10 +80,12 @@ Only secrets and build output are ignored. See [`.gitignore`](.gitignore).
 ## Running it
 
 ```
-cp .env.example .env     # add an Anthropic key
+cp .env.example .env     # add a Gemini key (free tier is enough)
 npm install
-npm run dev              # mock server and app together
+npm run dev              # mock server on :8787, app on :5173
 ```
+
+The drafting and assistant calls run server-side so the key never reaches the browser.
 
 ## Stack
 

@@ -1,0 +1,42 @@
+[
+  {
+    "object": "scholarship",
+    "id": 1,
+    "name": "President's Leadership Award",
+    "total_amount": 60000.0,
+    "is_active": true,
+    "award_cycle_id": 2,
+    "application_start_date": 1767614400,
+    "application_end_date": 1773403200
+  },
+  {
+    "object": "scholarship",
+    "id": 2,
+    "name": "STEM Excellence Scholarship",
+    "total_amount": 90000.0,
+    "is_active": true,
+    "award_cycle_id": 2,
+    "application_start_date": 1767614400,
+    "application_end_date": 1773403200
+  },
+  {
+    "object": "scholarship",
+    "id": 3,
+    "name": "First-Gen Founders Award",
+    "total_amount": 40000.0,
+    "is_active": true,
+    "award_cycle_id": 2,
+    "application_start_date": 1767614400,
+    "application_end_date": 1773403200
+  },
+  {
+    "object": "scholarship",
+    "id": 4,
+    "name": "Rodriguez Memorial Scholarship",
+    "total_amount": 35000.0,
+    "is_active": true,
+    "award_cycle_id": 2,
+    "application_start_date": 1767614400,
+    "application_end_date": 1773403200
+  }
+]
