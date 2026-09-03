@@ -49,6 +49,20 @@ Queue, donor brief, intake, draft, gate, write-back. Each works before the next 
 
 Hints and options over finished answers when William is learning something. No marketing copy. Tell him when a decision is bad. Keep responses short: answer the question asked, do not restate it three ways.
 
+**Pace: roughly ten lines of code at a time, explained before it is written.**
+
+This is deliberate and it is not about capability. William has to sit in an interview and
+explain every decision in this repo as his own. Code he did not follow going in is code he
+cannot defend, and a large silent diff is worse than no diff. So:
+
+- Say what the thing is and why it is needed, in plain language, BEFORE writing it.
+- Write a small piece. Stop. Let him ask.
+- Cite the doc page or the schema field any behaviour comes from. Every time.
+- Prefer the boring version he can read over the clever version he cannot.
+- Bloat is the enemy twice over: it costs tokens and it costs his mental model.
+
+If a step needs more than about ten lines, split it and say why it did not fit.
+
 Ask what is unclear in the spec before proposing a file layout. Do not write code until the layout is agreed.
 
 ## Open question, do not silently resolve
