@@ -97,4 +97,8 @@ Worth saying plainly: AwardSpring's API documentation is unusually good. Roughly
 
 ## License
 
-MIT. See [`LICENSE`](LICENSE).
+MIT, covering the code in this repository. See [`LICENSE`](LICENSE).
+
+One exception worth stating plainly: [`docs/openapi.json`](docs/openapi.json) is AwardSpring's
+own published API specification, redistributed here unmodified for reference. It is theirs, not
+mine, and the MIT grant above does not extend to it.
