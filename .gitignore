@@ -1,0 +1,27 @@
+# Secrets. The only thing here that is genuinely private.
+.env
+.env.local
+*.key
+
+# Dependencies and build output
+node_modules/
+dist/
+build/
+.vite/
+*.tsbuildinfo
+
+# Editor and OS noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Logs and coverage
+*.log
+npm-debug.log*
+coverage/
+
+# Deliberately NOT ignored, see README "What is in this repo and why":
+#   SPEC.md, CLAUDE.md, docs/, and the fixture data are all committed on purpose.
+#   The process is meant to be readable, not hidden.
