@@ -24,3 +24,4 @@ final.
 | [0004](0004-pagination-filter-resend.md) | Resolving their pagination/endpoint contradiction |
 | [0005](0005-reject-resume-screener-instructions.md) | Rejected: instructing automated resume screeners |
 | [0006](0006-reports-screen-independent-fetch.md) | Reports screen fetches its own data, for now |
+| [0007](0007-queue-cycle-window.md) | What counts as "gave during the current award cycle" |
