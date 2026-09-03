@@ -542,5 +542,21 @@
     "gift_acknowledgement_sent": true,
     "date": 1683633600,
     "soft_credits": []
+  },
+  {
+    "object": "gift",
+    "id": 35,
+    "donor_id": 8,
+    "type": "gift",
+    "gift_type": "InKind",
+    "amount": 0.0,
+    "subject": "Donated lab equipment",
+    "description": "AwardSpring's gifts/create docs allow amount=0 only when gift_type is InKind - this is the one fixture record exercising that rule.",
+    "fund_id": "Rodriguez Memorial Fund",
+    "campaign_id": null,
+    "is_completed": true,
+    "gift_acknowledgement_sent": false,
+    "date": 1773144000,
+    "soft_credits": []
   }
 ]

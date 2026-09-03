@@ -24,11 +24,6 @@ export function Shell({
   return (
     <>
       <header className="topbar">
-        <div className="traffic">
-          <i style={{ background: '#ff5f57' }} />
-          <i style={{ background: '#febc2e' }} />
-          <i style={{ background: '#28c840' }} />
-        </div>
         <div className="search">
           <span>⌕</span>
           <span>Search scholarships, applicants, donors...</span>

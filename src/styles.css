@@ -36,8 +36,6 @@ button { font: inherit; cursor: pointer; }
   background: var(--navy); display: flex; align-items: center;
   gap: 16px; padding: 0 16px; z-index: 20;
 }
-.traffic { display: flex; gap: 7px; }
-.traffic i { width: 11px; height: 11px; border-radius: 50%; display: block; }
 
 .search {
   flex: 1; max-width: 780px; height: 26px; border-radius: 13px;
