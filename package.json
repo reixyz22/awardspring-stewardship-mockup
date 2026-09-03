@@ -8,7 +8,8 @@
     "dev:mock": "tsx watch server/index.ts",
     "dev:web": "vite",
     "build": "tsc -b && vite build",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "experiment": "tsx experiments/fetch-strategy.ts"
   },
   "dependencies": {
     "express": "^4.19.2",

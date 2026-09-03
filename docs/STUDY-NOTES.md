@@ -49,6 +49,12 @@ types safely. `apiGet<T>` fetches JSON and tells TypeScript what shape to
 expect, so the type system catches mistakes instead of a bug showing up at
 runtime."
 
+The return type is written `Promise<T>`, not just `T`. That's two of the ideas
+above stacked: it's a Promise because the function is `async` (point 1), and
+it's generic in `T` (this point), so "the placeholder-shaped thing that
+resolves eventually" is the honest, precise type. `experiments/fetch-strategy.ts`
+has a small standalone example: `get<T>(path): Promise<T>`.
+
 ---
 
 ## 3. `Promise.all([...])` — running requests at the same time

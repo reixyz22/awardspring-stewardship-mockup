@@ -34,6 +34,22 @@ app.use((_req, res, next) => {
 });
 
 const mock = express.Router();
+
+/**
+ * Artificial network delay, off by default (0ms).
+ *
+ * This is NOT a documented AwardSpring behaviour - nothing in their docs says
+ * their API is slow - so it does not belong next to the real conventions above.
+ * It exists only to answer one question honestly: on localhost, round-trip time
+ * is near zero, so "does sharing one fetch save time?" can't be tested here as-is.
+ * Setting EXPERIMENT_LATENCY_MS simulates a real API's round-trip time so that
+ * question becomes answerable. See experiments/README.md.
+ */
+const EXPERIMENT_LATENCY_MS = Number(process.env.EXPERIMENT_LATENCY_MS ?? 0);
+if (EXPERIMENT_LATENCY_MS > 0) {
+  mock.use((_req, _res, next) => setTimeout(next, EXPERIMENT_LATENCY_MS));
+}
+
 mock.use(rateLimitHeaders);
 mock.use(requireApiKey);
 mock.use(donorsRouter);
