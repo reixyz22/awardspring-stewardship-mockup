@@ -4,6 +4,11 @@ A small web app for one job: a scholarship foundation staffer thanking donors at
 
 Built against [AwardSpring's public v1 API spec](https://docs.awardspring.com). Not affiliated with or endorsed by AwardSpring.
 
+**If you read one other file, make it [`docs/adr/`](docs/adr/README.md)** — a short,
+numbered record of the real engineering decisions in this repo (what was considered,
+what was chosen, why), each one a few paragraphs. `SPEC.md` is the full design doc
+underneath it and isn't assumed reading.
+
 > **Status: in progress.** Nothing below is claimed as finished unless it is checked off in [Build status](#build-status). This section will not be edited to look better than the code.
 
 ---
@@ -69,11 +74,11 @@ Authentication, user accounts, roles, a database, real email sending, webhook re
 
 Most of what is usually kept private is committed here on purpose.
 
-- **[`SPEC.md`](SPEC.md)** — what to build and why, written before any code. Including the parts that were cut.
-- **[`CLAUDE.md`](CLAUDE.md)** — the actual instructions given to Claude Code, unedited. Nearly all of this repo is AI-generated, and the interesting artifact is the constraints, not the output.
+- **[`docs/adr/`](docs/adr/README.md)** — numbered Architecture Decision Records: the real decisions, what was considered, why one thing was chosen over another, including the ones that later get superseded. Start here.
+- **[`SPEC.md`](SPEC.md)** — the full design doc, written before any code. Not assumed reading; the ADRs above cite the parts that matter.
 - **[`docs/awardspring-api-notes.md`](docs/awardspring-api-notes.md)** — working notes compiled from all 30 pages of their public documentation, including two places where their own docs contradict each other.
 - **[`docs/openapi.json`](docs/openapi.json)** — their published OpenAPI 3.1 spec, vendored unmodified so the types and the mock have a single source of truth. Fetched 2026-09-02.
-- **[`docs/DECISIONS.md`](docs/DECISIONS.md)** — running log of decisions and the reasoning, including the wrong turns.
+- **[`CLAUDE.md`](CLAUDE.md)** — the actual instructions given to Claude Code, unedited. Nearly all of this repo is AI-generated, and the interesting artifact is the constraints, not the output.
 
 Only secrets and build output are ignored. See [`.gitignore`](.gitignore).
 

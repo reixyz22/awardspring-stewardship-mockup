@@ -1,5 +1,10 @@
 # Donor Stewardship Mock-up — build spec
 
+*This is the deep-dive design doc, written before any code. Most readers
+should start at [`README.md`](README.md) instead — this file is here for
+anyone who wants the full "what and why," not as the first thing to read.
+For the reasoning behind specific decisions, see [`docs/adr/`](docs/adr/README.md).*
+
 For a Claude Code session. **Architecture and behaviour only. No implementation, no code, no file contents.** The build session decides how; this decides what and why.
 
 Companion file: `awardspring-api-notes.md` — all 30 pages of their API docs, compiled. Read it first.
@@ -157,33 +162,10 @@ Fixture data must be obviously synthetic. Invented names, invented institutions,
 
 ## Design question — should the Reports screen reuse the Donors screen's data?
 
-The Donors screen already fetches every donor and every donor's `quick_stats`
-(17 requests for 16 donors, see the donor list footer). The Reports screen
-needs the exact same data to compute LYBUNT/SYBUNT. Two ways to get it there:
-
-**Option A — lift the fetch up, pass the data down.** A parent component
-fetches once; both Donors and Reports read from it as props (or a shared
-store). Reports never makes its own request.
-
-- **Pro:** zero duplicate requests. If you'd already opened Donors, Reports is instant.
-- **Pro:** one source of truth — both screens can never show different numbers for the same donor.
-- **Con:** couples two screens that are otherwise independent. Reports now depends on something outside itself to have already run.
-- **Con:** needs somewhere for that shared state to live (a parent component, or later a small store) — more structure for a project this size.
-- **Con:** if the user opens Reports first, without visiting Donors, there is nothing to reuse — the fetch has to happen somewhere anyway, so this only saves work in the specific case where Donors was opened first.
-
-**Option B — each screen fetches its own data independently.**
-
-- **Pro:** simplest to read. Open `Reports.tsx`, see everything it needs, nothing implicit from outside.
-- **Pro:** each screen works correctly no matter what order you visit them in.
-- **Con:** duplicates the full 17-request fetch every time Reports is opened, even right after Donors already paid that cost.
-- **Con:** two screens now independently compute the same numbers from the same source — a bug fixed in one fetch path doesn't automatically fix the other.
-
-**Decision, for this project:** Option B. The mock has no real latency or rate
-limit to actually cost us, and "each screen owns its own data" is the pattern
-that's easiest to explain and easiest to keep correct while shipping fast. If
-this app grew a third or fourth screen that all needed donor+gift data, that
-would be the point to revisit and lift the fetch into a shared cache — doing
-it now, for two screens, would be solving a problem we don't have yet.
+Decided in [ADR-0006](docs/adr/0006-reports-screen-independent-fetch.md): each
+screen fetches independently, for now. That record also links the open
+question about whether this holds once realistic network latency is
+simulated — see `experiments/`.
 
 ## Stretch, only if the gate lands early
 
@@ -211,4 +193,6 @@ No metrics that were not measured. No claimed users. No implication of a relatio
 
 Their documentation ships an MCP server at `https://docs.awardspring.com/_mcp/server`, advertised on every page for Claude Code and Cursor. Connect to it before starting — the spec becomes queryable during the build rather than something to paste in. `.md` on any doc URL returns clean markdown, and `/llms.txt` is the index.
 
-One open question worth knowing about, documented in the API notes: their pagination page and their scholarship reporting endpoints give apparently opposite instructions about resending `award_cycle_id` while paging. Pick one behaviour for the mock, implement it, and leave a comment noting the ambiguity.
+Their pagination page and their scholarship reporting endpoints give apparently
+opposite instructions about resending `award_cycle_id` while paging. Resolved
+in [ADR-0004](docs/adr/0004-pagination-filter-resend.md).

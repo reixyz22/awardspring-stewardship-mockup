@@ -73,4 +73,8 @@ These read as opposite instructions. Pick one behaviour for the mock, implement 
 
 ## Log decisions
 
-Append to `docs/DECISIONS.md` as you go, including the wrong turns. That file is committed and is part of what makes this repo worth reading.
+Real decisions go in `docs/adr/` as a new numbered file (Nygard ADR format —
+see `docs/adr/README.md` for the convention). Never edit a past ADR's
+reasoning after it's accepted; if a decision is reversed, write a new ADR
+that supersedes it. This is committed on purpose and is part of what makes
+this repo worth reading.
