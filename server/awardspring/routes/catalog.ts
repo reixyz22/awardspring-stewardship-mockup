@@ -11,7 +11,7 @@
  *         match the cursor value is rejected."
  */
 import { Router } from 'express';
-import { db } from '../store.ts';
+import { db, toAwardedStudent } from '../store.ts';
 import { paginate } from '../conventions/pagination.ts';
 import { notFound, sendError } from '../conventions/errors.ts';
 
@@ -75,5 +75,5 @@ catalogRouter.get('/scholarships/awarded-students', (req, res) => {
     starting_after: req.query.starting_after as string | undefined,
     filters,
   });
-  if (page) res.json(page);
+  if (page) res.json({ ...page, data: page.data.map(toAwardedStudent) });
 });

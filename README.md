@@ -55,10 +55,11 @@ Steps 1 through 4 are setup. **Step 5 is the product.**
 
 ## Build status
 
-- [ ] Mock server
-- [ ] Typed client
-- [ ] Queue
-- [ ] Donor brief
+- [x] Mock server
+- [x] Typed client
+- [x] Queue
+- [x] Reports (Giving Pyramid, LYBUNT/SYBUNT — added scope, see docs/adr/)
+- [ ] Donor brief — giving history and activity timeline are live; still needs the awarded-students tie-in (which fund's money reached which students)
 - [ ] Intake
 - [ ] Draft with source labelling
 - [ ] Approval gate

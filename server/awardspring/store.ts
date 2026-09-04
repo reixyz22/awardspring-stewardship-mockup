@@ -86,6 +86,20 @@ export const toGift = (g: RawGift) => ({
   soft_credits: g.soft_credits,
 });
 
+/**
+ * AwardedStudentV1 has no field for major/course of study - checked directly
+ * against docs/openapi.json. The fixture carries a `major` column (useful for
+ * generating believable data), but it must never reach a response: showing it
+ * would claim the real API returns something it doesn't.
+ * @spec openapi.json #/components/schemas/AwardedStudentV1
+ */
+export const toAwardedStudent = (r: Record<string, unknown>) => ({
+  object: 'awarded_student', id: r.id, scholarship_id: r.scholarship_id,
+  scholarship_name: r.scholarship_name, fund_id: r.fund_id, student_id: r.student_id,
+  first_name: r.first_name, last_name: r.last_name, email: r.email,
+  awarded_date: r.awarded_date, awarded_amount: r.awarded_amount,
+});
+
 export const donorName = (d: RawDonor) =>
   d.role === 'Organization' ? (d.organization_name ?? 'Unnamed organization')
     : [d.first_name, d.last_name].filter(Boolean).join(' ');

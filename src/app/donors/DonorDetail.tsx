@@ -11,8 +11,8 @@
  */
 import { useEffect, useState } from 'react';
 import { apiGet, apiList } from '../../api/client.ts';
-import type { DonorActivity, DonorDetail as Donor, Gift } from '../../api/types.ts';
-import { displayName, initials, longDate, money, monthLabel } from '../../lib/format.ts';
+import type { AwardCycle, AwardedStudent, DonorActivity, DonorDetail as Donor, Gift } from '../../api/types.ts';
+import { displayName, initials, longDate, money, moneyShort, monthLabel } from '../../lib/format.ts';
 
 const humanise = (s: string | null) =>
   !s ? '--' : s.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (c) => c.toUpperCase());
@@ -24,16 +24,18 @@ type Entry =
 export function DonorDetail({ donorId, onBack }: { donorId: number; onBack: () => void }) {
   const [donor, setDonor] = useState<Donor | null>(null);
   const [entries, setEntries] = useState<Entry[]>([]);
+  const [fundedStudents, setFundedStudents] = useState<AwardedStudent[]>([]);
   const [open, setOpen] = useState<number | null>(null);
   const [tab, setTab] = useState<'Profile' | 'Activity'>('Activity');
 
   useEffect(() => {
     let live = true;
     (async () => {
-      const [d, gifts, acts] = await Promise.all([
+      const [d, gifts, acts, cycle] = await Promise.all([
         apiGet<Donor>(`/api/v1/donors/${donorId}`),
         apiList<Gift>('/api/v1/gifts', { donor_id: donorId }),
         apiList<DonorActivity>(`/api/v1/donors/${donorId}/activities`),
+        apiGet<AwardCycle>('/api/v1/award-cycles/current'),
       ]);
       if (!live) return;
       setDonor(d);
@@ -43,6 +45,16 @@ export function DonorDetail({ donorId, onBack }: { donorId: number; onBack: () =
       ].sort((a, b) => b.date - a.date);
       setEntries(merged);
       setOpen(merged[0]?.kind === 'gift' ? merged[0].id : null);
+
+      // Which students this donor's money actually reached, this cycle - the
+      // one thing a form letter can't say. Join is on fund_id: both Gift and
+      // AwardedStudentV1 carry it as the same string identifier.
+      const awarded = await apiList<AwardedStudent>('/api/v1/scholarships/awarded-students', {
+        award_cycle_id: cycle.id,
+      });
+      if (!live) return;
+      const donorFundIds = new Set(gifts.data.map((g) => g.fund_id).filter((f): f is string => f !== null));
+      setFundedStudents(awarded.data.filter((a) => a.fund_id !== null && donorFundIds.has(a.fund_id)));
     })();
     return () => { live = false; };
   }, [donorId]);
@@ -83,6 +95,22 @@ export function DonorDetail({ donorId, onBack }: { donorId: number; onBack: () =
             <div className="val">{money(donor.quick_stats.year_total)}</div>
             <div className="lbl" style={{ marginTop: 13 }}>Gifts recorded</div>
             <div className="val">{donor.quick_stats.lifetime_gift_count ?? '--'}</div>
+          </section>
+
+          <section className="card pad">
+            <div className="lbl" style={{ marginBottom: 12 }}>Funded this cycle</div>
+            {fundedStudents.length === 0 ? (
+              <p className="sub" style={{ margin: 0 }}>
+                No students awarded this cycle from this donor's funds.
+              </p>
+            ) : (
+              fundedStudents.map((s) => (
+                <div key={s.id} style={{ marginBottom: 10 }}>
+                  <div className="val" style={{ fontWeight: 600 }}>{s.first_name} {s.last_name}</div>
+                  <div className="sub" style={{ margin: 0 }}>{s.scholarship_name} — {moneyShort(s.awarded_amount)}</div>
+                </div>
+              ))
+            )}
           </section>
 
           <section className="gap">

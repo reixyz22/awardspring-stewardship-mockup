@@ -100,10 +100,14 @@ The count matters — it is the problem statement rendered as a number. Forty un
 Selecting a donor shows what the system already knows, assembled from the API rather than typed by anyone:
 
 - Giving history — total, span of years, the fund or funds
-- **The students that fund awarded this cycle**: names, amounts, what they study
+- **The students that fund awarded this cycle**: names, amounts, which scholarship
 - Any prior contact from the activity timeline
 
 The second item is the whole reason this beats a form letter, and it is the reason `scholarships/awarded-students` is in scope. A template cannot say which four students this donor's money reached. This can.
+
+*(Corrected 2026-09-03: this originally said "what they study" -
+`AwardedStudentV1` has no major/course-of-study field. Caught while building
+the donor brief - see `server/awardspring/store.ts`'s `toAwardedStudent`.)*
 
 ### 3. Conversational intake
 
