@@ -13,6 +13,7 @@
  */
 import { GoogleGenAI, createPartFromFunctionResponse } from '@google/genai';
 import { tools, toolByName } from './tools.ts';
+import { friendlyGeminiError } from './gemini-error.ts';
 
 const MODEL = 'gemini-2.5-flash';
 
@@ -44,23 +45,28 @@ export async function askAssistant(message: string): Promise<AssistantResult> {
   });
 
   const toolCalls: AssistantToolCall[] = [];
-  let response = await chat.sendMessage({ message });
 
-  // Keep executing whatever the model asks for and handing back real
-  // results until it stops asking - this is the whole "never invent an
-  // answer" guarantee, enforced by code rather than just by the prompt.
-  while (response.functionCalls && response.functionCalls.length > 0) {
-    const parts = [];
-    for (const call of response.functionCalls) {
-      const name = call.name ?? '';
-      const args = call.args ?? {};
-      const tool = toolByName.get(name);
-      const result = tool ? await tool.run(args) : { error: `No such tool: ${name}` };
-      toolCalls.push({ name, args });
-      parts.push(createPartFromFunctionResponse(call.id ?? '', name, { result }));
+  try {
+    let response = await chat.sendMessage({ message });
+
+    // Keep executing whatever the model asks for and handing back real
+    // results until it stops asking - this is the whole "never invent an
+    // answer" guarantee, enforced by code rather than just by the prompt.
+    while (response.functionCalls && response.functionCalls.length > 0) {
+      const parts = [];
+      for (const call of response.functionCalls) {
+        const name = call.name ?? '';
+        const args = call.args ?? {};
+        const tool = toolByName.get(name);
+        const result = tool ? await tool.run(args) : { error: `No such tool: ${name}` };
+        toolCalls.push({ name, args });
+        parts.push(createPartFromFunctionResponse(call.id ?? '', name, { result }));
+      }
+      response = await chat.sendMessage({ message: parts });
     }
-    response = await chat.sendMessage({ message: parts });
-  }
 
-  return { text: response.text ?? '', toolCalls };
+    return { text: response.text ?? '', toolCalls };
+  } catch (err) {
+    throw new Error(friendlyGeminiError(err));
+  }
 }

@@ -7,6 +7,7 @@
  * that afterward, rather than trusting the model's word for it.
  */
 import { GoogleGenAI } from '@google/genai';
+import { friendlyGeminiError } from './gemini-error.ts';
 
 const MODEL = 'gemini-2.5-flash';
 
@@ -50,6 +51,10 @@ Do not state any other number, name, or date that isn't listed above.
 
 Write only the letter body. No subject line, no signature block.`;
 
-  const response = await ai.models.generateContent({ model: MODEL, contents: prompt });
-  return response.text ?? '';
+  try {
+    const response = await ai.models.generateContent({ model: MODEL, contents: prompt });
+    return response.text ?? '';
+  } catch (err) {
+    throw new Error(friendlyGeminiError(err));
+  }
 }
