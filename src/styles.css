@@ -31,8 +31,10 @@ button { font: inherit; cursor: pointer; }
 
 /* ---------- shell ---------- */
 
+/* Starts after the sidebar, not at the page edge - the sidebar owns the
+   top-left corner (its logo lives there) so the two don't fight over it. */
 .topbar {
-  position: fixed; inset: 0 0 auto 0; height: var(--topbar);
+  position: fixed; top: 0; right: 0; left: var(--sidebar); height: var(--topbar);
   background: var(--navy); display: flex; align-items: center;
   gap: 16px; padding: 0 16px; z-index: 20;
 }
@@ -43,7 +45,7 @@ button { font: inherit; cursor: pointer; }
    width, not the bar as a whole, since there's nothing symmetric on the left. */
 .assistant-wrap {
   position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-  width: 900px; max-width: calc(100% - 260px);
+  width: 1080px; max-width: calc(100% - 240px);
 }
 
 .assistant-bar {
@@ -61,7 +63,7 @@ button { font: inherit; cursor: pointer; }
 
 .assistant-panel {
   position: absolute; top: calc(100% + 10px); left: 0; right: 0;
-  background: #eef2f8; border: 1px solid #d7deea; border-radius: 12px;
+  background: #e3e9f3; border: 1px solid #c7d1e0; border-radius: 12px;
   box-shadow: 0 16px 32px rgba(16, 27, 45, .22); padding: 16px 18px; z-index: 30;
 }
 .assistant-q { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
@@ -70,7 +72,7 @@ button { font: inherit; cursor: pointer; }
   color: #b9c4d4; font-size: 12px; }
 
 .sidebar {
-  position: fixed; top: var(--topbar); bottom: 0; left: 0; width: var(--sidebar);
+  position: fixed; top: 0; bottom: 0; left: 0; width: var(--sidebar);
   background: var(--navy); padding: 20px 12px; z-index: 10;
 }
 .brand { padding: 0 10px 22px; display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
