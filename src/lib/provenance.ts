@@ -1,6 +1,7 @@
 /**
  * Splits generated text into segments, tagging any exact match of a known
- * fact as `source: 'api'` and everything else as `source: 'model'`.
+ * fact as `source: 'api'` (with a citation saying exactly where it came
+ * from) and everything else as `source: 'model'`.
  *
  * This is what makes the labeling trustworthy rather than self-reported:
  * the model is never asked which parts it made up. We already know,
@@ -10,17 +11,24 @@
  * tagged; that's the safe failure direction. Nothing false can ever get
  * mislabeled as verified.
  */
-export interface Segment { text: string; source: 'api' | 'model' }
+export interface Fact { value: string; citation: string }
+export type Segment =
+  | { text: string; source: 'model' }
+  | { text: string; source: 'api'; citation: string };
 
-export function tagProvenance(text: string, facts: string[]): Segment[] {
-  const known = [...new Set(facts.filter(Boolean))].sort((a, b) => b.length - a.length);
-  if (known.length === 0) return [{ text, source: 'model' }];
+export function tagProvenance(text: string, facts: Fact[]): Segment[] {
+  const known = new Map<string, string>();
+  for (const f of facts) {
+    if (f.value && !known.has(f.value)) known.set(f.value, f.citation);
+  }
+  const values = [...known.keys()].sort((a, b) => b.length - a.length);
+  if (values.length === 0) return [{ text, source: 'model' }];
 
-  const pattern = new RegExp(`(${known.map(escapeRegExp).join('|')})`, 'g');
-  return text.split(pattern).filter((chunk) => chunk.length > 0).map((chunk) => ({
-    text: chunk,
-    source: known.includes(chunk) ? 'api' : 'model',
-  }));
+  const pattern = new RegExp(`(${values.map(escapeRegExp).join('|')})`, 'g');
+  return text.split(pattern).filter((chunk) => chunk.length > 0).map((chunk): Segment => {
+    const citation = known.get(chunk);
+    return citation !== undefined ? { text: chunk, source: 'api', citation } : { text: chunk, source: 'model' };
+  });
 }
 
 function escapeRegExp(s: string): string {

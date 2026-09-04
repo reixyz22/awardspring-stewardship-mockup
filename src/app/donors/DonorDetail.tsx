@@ -150,10 +150,7 @@ export function DonorDetail({ donorId, onBack }: { donorId: number; onBack: () =
                 <button>Events</button>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
-                <h2 style={{ fontSize: 15, margin: 0, fontWeight: 600 }}>Activity Records</h2>
-                <button className="ghost-btn" style={{ marginLeft: 'auto' }}>+ Add Activity</button>
-              </div>
+              <h2 style={{ fontSize: 15, margin: '0 0 4px', fontWeight: 600 }}>Activity Records</h2>
 
               {entries.map((e) => {
                 const m = monthLabel(e.date);

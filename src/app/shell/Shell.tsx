@@ -107,6 +107,7 @@ export function Shell({
             </button>
           ))}
         </nav>
+        <div className="sidebar-credit">Built by William Pitts <span>✦</span> Claude</div>
       </aside>
 
       <main className="main">

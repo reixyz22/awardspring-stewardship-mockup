@@ -12,30 +12,33 @@ import { useState } from 'react';
 import { generateDraft } from '../../api/draft.ts';
 import type { AwardedStudent, DonorDetail as Donor } from '../../api/types.ts';
 import { displayName, moneyShort } from '../../lib/format.ts';
-import { tagProvenance } from '../../lib/provenance.ts';
+import { tagProvenance, type Fact } from '../../lib/provenance.ts';
 
 type Flow =
   | { phase: 'form' }
   | { phase: 'loading' }
   | { phase: 'error'; message: string }
-  | { phase: 'review'; text: string; facts: string[]; editing: boolean }
+  | { phase: 'review'; text: string; facts: Fact[]; editing: boolean }
   | { phase: 'confirmSend'; text: string }
   | { phase: 'sent' }
   | { phase: 'confirmReject'; text: string }
   | { phase: 'rejected'; reason: string };
 
-function buildFacts(donor: Donor, fundedStudents: AwardedStudent[]): string[] {
+/** Every fact carries exactly where it came from, for the hover citation. */
+function buildFacts(donor: Donor, fundedStudents: AwardedStudent[]): Fact[] {
   const qs = donor.quick_stats;
+  const fromDonor = "This donor's own record (GET /donors/{id} → quick_stats)";
+  const fromAwards = 'This cycle\'s awarded students (GET /scholarships/awarded-students)';
   return [
-    moneyShort(qs.lifetime_total),
-    moneyShort(qs.year_total),
-    qs.lifetime_gift_count != null ? String(qs.lifetime_gift_count) : '',
+    { value: moneyShort(qs.lifetime_total), citation: `${fromDonor}.lifetime_total` },
+    { value: moneyShort(qs.year_total), citation: `${fromDonor}.year_total` },
+    { value: qs.lifetime_gift_count != null ? String(qs.lifetime_gift_count) : '', citation: `${fromDonor}.lifetime_gift_count` },
     ...fundedStudents.flatMap((s) => [
-      [s.first_name, s.last_name].filter(Boolean).join(' '),
-      moneyShort(s.awarded_amount),
-      s.scholarship_name ?? '',
+      { value: [s.first_name, s.last_name].filter(Boolean).join(' '), citation: fromAwards },
+      { value: moneyShort(s.awarded_amount), citation: `${fromAwards}: ${s.first_name}'s awarded_amount` },
+      { value: s.scholarship_name ?? '', citation: fromAwards },
     ]),
-  ].filter(Boolean);
+  ].filter((f) => f.value);
 }
 
 /**
@@ -81,7 +84,9 @@ export function DraftPanel({
   const submit = async () => {
     setFlow({ phase: 'loading' });
     try {
-      const text = await generateDraft({ donorName: name, facts, context, familiarity, tone, note });
+      const text = await generateDraft({
+        donorName: name, facts: facts.map((f) => f.value), context, familiarity, tone, note,
+      });
       setFlow({ phase: 'review', text, facts, editing: false });
     } catch (err) {
       setFlow({ phase: 'error', message: err instanceof Error ? err.message : String(err) });
@@ -143,14 +148,15 @@ export function DraftPanel({
             <div className="letter">
               {tagProvenance(flow.text, flow.facts).map((seg, i) => (
                 seg.source === 'api'
-                  ? <span key={i} className="fact">{seg.text}</span>
+                  ? <span key={i} className="fact" data-citation={seg.citation}>{seg.text}</span>
                   : <span key={i}>{seg.text}</span>
               ))}
             </div>
           )}
           <p className="sub" style={{ marginTop: 10 }}>
             <span className="fact" style={{ marginRight: 6 }}>highlighted</span>
-            text is a real API fact, copied verbatim. Everything else is the model's own writing.
+            text is a real API fact, copied verbatim - hover one to see exactly where it came from.
+            Everything else is the model's own writing.
           </p>
 
           <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
