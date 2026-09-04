@@ -17,6 +17,7 @@ import type { DonorDetail, DonorListItem } from '../../api/types.ts';
 import { givingPyramid } from '../../reports/pyramid.ts';
 import { givingStatus, type GivingStatus } from '../../reports/lybunt.ts';
 import { displayName, longDate, moneyShort } from '../../lib/format.ts';
+import { ErrorBanner } from '../shared/ErrorBanner.tsx';
 
 const STATUS_LABEL: Record<GivingStatus, string> = {
   active: 'Active', lybunt: 'LYBUNT', sybunt: 'SYBUNT', never: 'Never given',
@@ -25,19 +26,25 @@ const STATUS_LABEL: Record<GivingStatus, string> = {
 export function Reports() {
   const [donors, setDonors] = useState<DonorDetail[]>([]);
   const [requests, setRequests] = useState(0);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let live = true;
     (async () => {
-      const list = await apiList<DonorListItem>('/api/v1/donors');
-      const details = await Promise.all(list.data.map((d) => apiGet<DonorDetail>(`/api/v1/donors/${d.id}`)));
-      if (!live) return;
-      setDonors(details);
-      setRequests(list.requests + details.length);
+      try {
+        const list = await apiList<DonorListItem>('/api/v1/donors');
+        const details = await Promise.all(list.data.map((d) => apiGet<DonorDetail>(`/api/v1/donors/${d.id}`)));
+        if (!live) return;
+        setDonors(details);
+        setRequests(list.requests + details.length);
+      } catch (e) {
+        if (live) setError(e instanceof Error ? e.message : String(e));
+      }
     })();
     return () => { live = false; };
   }, []);
 
+  if (error) return <ErrorBanner message={error} />;
   if (donors.length === 0) return <p className="sub">Loading…</p>;
 
   const pyramid = givingPyramid(donors.map((d) => d.quick_stats.lifetime_total ?? 0));

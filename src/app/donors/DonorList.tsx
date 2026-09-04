@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react';
 import { apiGet, apiList } from '../../api/client.ts';
 import type { DonorDetail, DonorListItem } from '../../api/types.ts';
 import { displayName, longDate, moneyShort } from '../../lib/format.ts';
+import { ErrorBanner } from '../shared/ErrorBanner.tsx';
 
 type Row = DonorListItem & { detail?: DonorDetail };
 
@@ -40,7 +41,7 @@ export function DonorList({ onOpen }: { onOpen: (id: number) => void }) {
     return () => { live = false; };
   }, []);
 
-  if (error) return <p style={{ color: '#b4232a' }}>{error}</p>;
+  if (error) return <ErrorBanner message={error} />;
 
   const sorted = [...rows].sort(
     (a, b) => (b.detail?.quick_stats.lifetime_total ?? 0) - (a.detail?.quick_stats.lifetime_total ?? 0),

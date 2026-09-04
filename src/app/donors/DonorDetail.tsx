@@ -14,6 +14,7 @@ import { apiGet, apiList } from '../../api/client.ts';
 import type { AwardCycle, AwardedStudent, DonorActivity, DonorDetail as Donor, Gift } from '../../api/types.ts';
 import { displayName, initials, longDate, money, moneyShort, monthLabel } from '../../lib/format.ts';
 import { DraftPanel } from './DraftPanel.tsx';
+import { ErrorBanner } from '../shared/ErrorBanner.tsx';
 
 const humanise = (s: string | null) =>
   !s ? '--' : s.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (c) => c.toUpperCase());
@@ -36,38 +37,44 @@ export function DonorDetail({
   const [drafting, setDrafting] = useState(false);
   const [open, setOpen] = useState<number | null>(null);
   const [tab, setTab] = useState<'Profile' | 'Activity'>('Activity');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let live = true;
     (async () => {
-      const [d, gifts, acts, cycle] = await Promise.all([
-        apiGet<Donor>(`/api/v1/donors/${donorId}`),
-        apiList<Gift>('/api/v1/gifts', { donor_id: donorId }),
-        apiList<DonorActivity>(`/api/v1/donors/${donorId}/activities`),
-        apiGet<AwardCycle>('/api/v1/award-cycles/current'),
-      ]);
-      if (!live) return;
-      setDonor(d);
-      const merged: Entry[] = [
-        ...gifts.data.map((g) => ({ kind: 'gift' as const, id: g.id, date: g.date, gift: g })),
-        ...acts.data.map((a) => ({ kind: 'activity' as const, id: a.id, date: a.date, activity: a })),
-      ].sort((a, b) => b.date - a.date);
-      setEntries(merged);
-      setOpen(merged[0]?.kind === 'gift' ? merged[0].id : null);
+      try {
+        const [d, gifts, acts, cycle] = await Promise.all([
+          apiGet<Donor>(`/api/v1/donors/${donorId}`),
+          apiList<Gift>('/api/v1/gifts', { donor_id: donorId }),
+          apiList<DonorActivity>(`/api/v1/donors/${donorId}/activities`),
+          apiGet<AwardCycle>('/api/v1/award-cycles/current'),
+        ]);
+        if (!live) return;
+        setDonor(d);
+        const merged: Entry[] = [
+          ...gifts.data.map((g) => ({ kind: 'gift' as const, id: g.id, date: g.date, gift: g })),
+          ...acts.data.map((a) => ({ kind: 'activity' as const, id: a.id, date: a.date, activity: a })),
+        ].sort((a, b) => b.date - a.date);
+        setEntries(merged);
+        setOpen(merged[0]?.kind === 'gift' ? merged[0].id : null);
 
-      // Which students this donor's money actually reached, this cycle - the
-      // one thing a form letter can't say. Join is on fund_id: both Gift and
-      // AwardedStudentV1 carry it as the same string identifier.
-      const awarded = await apiList<AwardedStudent>('/api/v1/scholarships/awarded-students', {
-        award_cycle_id: cycle.id,
-      });
-      if (!live) return;
-      const donorFundIds = new Set(gifts.data.map((g) => g.fund_id).filter((f): f is string => f !== null));
-      setFundedStudents(awarded.data.filter((a) => a.fund_id !== null && donorFundIds.has(a.fund_id)));
+        // Which students this donor's money actually reached, this cycle - the
+        // one thing a form letter can't say. Join is on fund_id: both Gift and
+        // AwardedStudentV1 carry it as the same string identifier.
+        const awarded = await apiList<AwardedStudent>('/api/v1/scholarships/awarded-students', {
+          award_cycle_id: cycle.id,
+        });
+        if (!live) return;
+        const donorFundIds = new Set(gifts.data.map((g) => g.fund_id).filter((f): f is string => f !== null));
+        setFundedStudents(awarded.data.filter((a) => a.fund_id !== null && donorFundIds.has(a.fund_id)));
+      } catch (e) {
+        if (live) setError(e instanceof Error ? e.message : String(e));
+      }
     })();
     return () => { live = false; };
   }, [donorId]);
 
+  if (error) return <ErrorBanner message={error} />;
   if (!donor) return <p className="sub">Loading…</p>;
 
   let lastMonth = '';
