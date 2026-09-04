@@ -16,6 +16,7 @@ import { donorsRouter } from './awardspring/routes/donors.ts';
 import { giftsRouter } from './awardspring/routes/gifts.ts';
 import { catalogRouter } from './awardspring/routes/catalog.ts';
 import { askAssistant } from './local/assistant.ts';
+import { generateDraft } from './local/draft.ts';
 
 // Vite loads .env automatically for the browser; this plain Node process
 // does not, so it's loaded explicitly. Node's own loader (20.6+), not the
@@ -74,6 +75,21 @@ app.post('/_local/assistant', async (req, res) => {
   if (!message) return res.status(400).json({ error: 'message is required' });
   try {
     res.json(await askAssistant(message));
+  } catch (err) {
+    res.status(502).json({ error: err instanceof Error ? err.message : String(err) });
+  }
+});
+
+app.post('/_local/draft', async (req, res) => {
+  const { donorName, facts, context, familiarity, tone, note } = req.body ?? {};
+  if (typeof donorName !== 'string' || !Array.isArray(facts)) {
+    return res.status(400).json({ error: 'donorName and facts are required' });
+  }
+  try {
+    const text = await generateDraft({
+      donorName, facts, context: context ?? '', familiarity: familiarity ?? '', tone: tone ?? 'warm', note: note ?? '',
+    });
+    res.json({ text });
   } catch (err) {
     res.status(502).json({ error: err instanceof Error ? err.message : String(err) });
   }

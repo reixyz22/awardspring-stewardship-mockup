@@ -9,7 +9,7 @@ numbered record of the real engineering decisions in this repo (what was conside
 what was chosen, why), each one a few paragraphs. `SPEC.md` is the full design doc
 underneath it and isn't assumed reading.
 
-> **Status: in progress.** Nothing below is claimed as finished unless it is checked off in [Build status](#build-status). This section will not be edited to look better than the code.
+> **Status: feature-complete against the scope in [`SPEC.md`](SPEC.md)** (write-back cut, see [ADR-0008](docs/adr/0008-cut-write-back.md)). Nothing below is claimed as finished unless it is checked off in [Build status](#build-status). This section will not be edited to look better than the code.
 
 ---
 
@@ -59,9 +59,9 @@ Steps 1 through 4 are setup. **Step 5 is the product.**
 - [x] Queue
 - [x] Reports (Giving Pyramid, LYBUNT/SYBUNT — added scope, see docs/adr/)
 - [x] Donor brief
-- [ ] Assistant
-- [ ] Draft with source labelling
-- [ ] Approval gate
+- [x] Assistant
+- [x] Draft with source labelling
+- [x] Approval gate
 
 ## Not built, on purpose
 

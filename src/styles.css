@@ -198,3 +198,38 @@ table.donors tbody tr:hover { background: var(--wash); cursor: pointer; }
   font-size: 13px; line-height: 1.5; padding: 11px 32px; margin: calc(-26px) -32px 22px;
 }
 .mockbar b { font-weight: 700; }
+
+/* ---------- draft + gate ---------- */
+
+/* An API-sourced fact, proven by tagProvenance matching real API output -
+   never a self-reported label from the model. */
+.fact { background: var(--gold-soft); padding: 1px 5px; border-radius: 4px; font-weight: 600; }
+
+.field { display: block; margin-bottom: 14px; }
+.field select, .field textarea, .field input[type="text"] {
+  display: block; width: 100%; margin-top: 6px; font: inherit; color: var(--ink);
+  border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; box-sizing: border-box;
+}
+.field textarea { resize: vertical; min-height: 70px; }
+
+.letter {
+  border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px;
+  line-height: 1.7; font-size: 13.5px; white-space: pre-wrap;
+}
+
+.btn-approve {
+  background: #1e8e4f; color: #fff; border: 0; border-radius: 8px;
+  padding: 10px 24px; font-size: 14px; font-weight: 700;
+}
+.btn-approve:hover { background: #187a42; }
+.btn-reject {
+  background: none; color: #c23b3b; border: 1px solid #c23b3b; border-radius: 8px;
+  padding: 10px 24px; font-size: 14px; font-weight: 600;
+}
+.btn-reject:hover { background: #fdf0f0; }
+
+.sent-banner {
+  background: #eafaf0; border: 1px solid #b9e8cc; color: #14663c;
+  border-radius: 10px; padding: 16px 18px;
+}
+.sent-banner b { font-size: 15px; }

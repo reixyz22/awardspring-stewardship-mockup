@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 import { apiGet, apiList } from '../../api/client.ts';
 import type { AwardCycle, AwardedStudent, DonorActivity, DonorDetail as Donor, Gift } from '../../api/types.ts';
 import { displayName, initials, longDate, money, moneyShort, monthLabel } from '../../lib/format.ts';
+import { DraftPanel } from './DraftPanel.tsx';
 
 const humanise = (s: string | null) =>
   !s ? '--' : s.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (c) => c.toUpperCase());
@@ -25,6 +26,7 @@ export function DonorDetail({ donorId, onBack }: { donorId: number; onBack: () =
   const [donor, setDonor] = useState<Donor | null>(null);
   const [entries, setEntries] = useState<Entry[]>([]);
   const [fundedStudents, setFundedStudents] = useState<AwardedStudent[]>([]);
+  const [drafting, setDrafting] = useState(false);
   const [open, setOpen] = useState<number | null>(null);
   const [tab, setTab] = useState<'Profile' | 'Activity'>('Activity');
 
@@ -70,10 +72,14 @@ export function DonorDetail({ donorId, onBack }: { donorId: number; onBack: () =
       <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 22 }}>
         <div className="avatar">{initials(donor.first_name, donor.last_name, donor.organization_name)}</div>
         <h1 className="h1">{displayName(donor)}</h1>
-        <div style={{ marginLeft: 'auto', display: 'flex', gap: 14, color: '#7c8a9d' }}>
-          <span>✉</span><span>▤</span><span>⋮</span>
-        </div>
+        <button className="ghost-btn" style={{ marginLeft: 'auto' }} onClick={() => setDrafting(true)}>
+          ✉ Draft thank-you
+        </button>
       </div>
+
+      {drafting && (
+        <DraftPanel donor={donor} fundedStudents={fundedStudents} onClose={() => setDrafting(false)} />
+      )}
 
       <div style={{ display: 'grid', gridTemplateColumns: '272px 1fr', gap: 26, alignItems: 'start' }}>
         <div style={{ display: 'grid', gap: 14 }}>
