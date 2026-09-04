@@ -43,8 +43,12 @@ button { font: inherit; cursor: pointer; }
    from every screen. Centered on the bar itself via absolute positioning,
    not flex - flex centering here would only balance against topbar-right's
    width, not the bar as a whole, since there's nothing symmetric on the left. */
+/* Nudged left of true-center: topbar-right (bell + email) eats into the
+   right side of this bar's container, so a pure 50% center overlaps it.
+   That content's width isn't fixed (email length varies), so a manual
+   offset is more honest here than a formula pretending to be precise. */
 .assistant-wrap {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  position: absolute; top: 50%; left: 50%; transform: translate(calc(-50% - 50px), -50%);
   width: 1080px; max-width: calc(100% - 240px);
 }
 
