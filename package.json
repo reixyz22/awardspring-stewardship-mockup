@@ -9,6 +9,7 @@
     "dev:web": "vite",
     "build": "tsc -b && vite build",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
     "experiment": "tsx experiments/fetch-strategy.ts"
   },
   "dependencies": {
@@ -22,10 +23,13 @@
     "@types/express": "^4.17.21",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
+    "@types/supertest": "^7.2.1",
     "@vitejs/plugin-react": "^4.3.1",
     "concurrently": "^9.0.1",
+    "supertest": "^7.2.2",
     "tsx": "^4.19.1",
     "typescript": "^5.6.2",
-    "vite": "^5.4.5"
+    "vite": "^5.4.5",
+    "vitest": "^3.2.7"
   }
 }
