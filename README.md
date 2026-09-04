@@ -46,10 +46,9 @@ Every donor, gift, fund, scholarship and student in `fixtures/` is invented. No 
 
 1. **Queue.** Donors who gave in the current award cycle with no logged acknowledgement. The count is the problem statement: forty unthanked donors is why form letters exist.
 2. **Donor brief.** Giving history, and the students that donor's fund awarded this cycle, assembled from the API rather than typed by anyone. This is the part a template cannot do.
-3. **Intake.** Three questions, not an interview, collecting only what the API cannot supply and a model should not guess: how well the staffer knows this donor, anything worth mentioning, tone.
+3. **Assistant.** A global panel, reachable from any screen, backed only by the same typed API calls the UI itself uses. It answers questions and can suggest actions — it never approves or sends anything itself; that stays a human click, always.
 4. **Draft.** The model writes the letter. **Every factual claim is labelled in the UI as either an API record or model output**, so a dollar figure pulled from a gift record and a sentence the model composed are visually distinct.
 5. **The gate.** Edit, approve, or reject. Nothing leaves without an explicit approve. Rejecting asks why in one line and keeps the reason.
-6. **Write-back.** On approve, log a `LoggedEmail` activity against the donor. Dry-run first, then commit with an idempotency key, which is the pattern their own docs recommend.
 
 Steps 1 through 4 are setup. **Step 5 is the product.**
 
@@ -59,15 +58,14 @@ Steps 1 through 4 are setup. **Step 5 is the product.**
 - [x] Typed client
 - [x] Queue
 - [x] Reports (Giving Pyramid, LYBUNT/SYBUNT — added scope, see docs/adr/)
-- [ ] Donor brief — giving history and activity timeline are live; still needs the awarded-students tie-in (which fund's money reached which students)
-- [ ] Intake
+- [x] Donor brief
+- [ ] Assistant
 - [ ] Draft with source labelling
 - [ ] Approval gate
-- [ ] Write-back
 
 ## Not built, on purpose
 
-Authentication, user accounts, roles, a database, real email sending, webhook receiving, and every scholarship or donor management feature that is not this one workflow.
+Authentication, user accounts, roles, a database, real email sending, webhook receiving, write-back (see [ADR-0008](docs/adr/0008-cut-write-back.md)), and every scholarship or donor management feature that is not this one workflow.
 
 ---
 

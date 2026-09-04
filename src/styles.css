@@ -13,7 +13,7 @@
   --paper: #ffffff;
   --wash: #f7f8fa;
   --sidebar: 216px;
-  --topbar: 48px;
+  --topbar: 64px;
 }
 
 * { box-sizing: border-box; }
@@ -37,12 +37,20 @@ button { font: inherit; cursor: pointer; }
   gap: 16px; padding: 0 16px; z-index: 20;
 }
 
-.search {
-  flex: 1; max-width: 780px; height: 26px; border-radius: 13px;
+/* Was a decorative search box; now the assistant's entry point, reachable
+   from every screen. Bigger, on purpose - it's a real input now, not a
+   screenshot prop. */
+.assistant-bar {
+  flex: 1; max-width: 860px; height: 40px; border-radius: 20px;
   background: var(--navy-soft); border: 1px solid #2a3a56;
-  display: flex; align-items: center; gap: 8px; padding: 0 12px;
-  color: #7f8ea6; font-size: 12px;
+  display: flex; align-items: center; gap: 10px; padding: 0 16px;
+  color: #7f8ea6; font-size: 13.5px;
 }
+.assistant-bar input {
+  flex: 1; background: none; border: 0; outline: none; color: #e6ecf4;
+  font: inherit;
+}
+.assistant-bar input::placeholder { color: #7f8ea6; }
 .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 14px;
   color: #b9c4d4; font-size: 12px; }
 
@@ -166,6 +174,6 @@ table.donors tbody tr:hover { background: var(--wash); cursor: pointer; }
 
 .mockbar {
   background: #fdf6e8; border-bottom: 1px solid #f0e0bd; color: #7a5a10;
-  font-size: 11.5px; padding: 7px 32px; margin: calc(-26px) -32px 22px;
+  font-size: 13px; line-height: 1.5; padding: 11px 32px; margin: calc(-26px) -32px 22px;
 }
 .mockbar b { font-weight: 700; }

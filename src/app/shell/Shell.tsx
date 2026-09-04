@@ -9,7 +9,7 @@
  * The signed-in user is fictional and the session is fake. There is no auth here
  * and the UI does not pretend otherwise.
  */
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 
 export const NAV = ['Dashboard', 'Donors', 'Reports'] as const;
 export type NavItem = (typeof NAV)[number];
@@ -21,12 +21,20 @@ export function Shell({
   onNavigate: (n: NavItem) => void;
   children: ReactNode;
 }) {
+  // Typeable today. Submitting to the model is the next piece to build -
+  // this is the shape of the assistant's entry point, not the wiring.
+  const [question, setQuestion] = useState('');
+
   return (
     <>
       <header className="topbar">
-        <div className="search">
-          <span>⌕</span>
-          <span>Search scholarships, applicants, donors...</span>
+        <div className="assistant-bar">
+          <span>✦</span>
+          <input
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            placeholder="Ask about a donor, a fund, or start a draft…"
+          />
         </div>
         <div className="topbar-right">
           <span>🔔</span>

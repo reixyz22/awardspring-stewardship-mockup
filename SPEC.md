@@ -109,15 +109,32 @@ The second item is the whole reason this beats a form letter, and it is the reas
 `AwardedStudentV1` has no major/course-of-study field. Caught while building
 the donor brief - see `server/awardspring/store.ts`'s `toAwardedStudent`.)*
 
-### 3. Conversational intake
+### 3. The assistant
 
-A short exchange — three questions, not an interview — collecting only what the API cannot supply and a model should not guess:
+*(Revised 2026-09-03 — this was originally "Conversational intake," a narrow
+3-question form. Broadened to match the original ask from before this file
+existed: "a dashboard that also has an AI assistant, answers questions
+etc." Intake becomes one thing the assistant is good for, not the only
+thing.)*
 
-- How well does the staffer know this donor
-- Anything specific worth mentioning
-- Tone
+A global panel, reachable from any screen — not scoped to one donor. It
+answers questions and can suggest actions ("open Bellweather Foundation,"
+"start a draft for Nancy Carter") by calling the same typed API client the
+rest of the app uses. It never guesses: if a question has no tool that can
+answer it, it says so rather than inventing an answer.
 
-Conversation history is kept for the session. The constraint that makes this good rather than annoying: **if the API already knows something, the app does not ask.**
+**Hard rule, not a style choice:** the assistant can look up and suggest,
+but it can never itself click approve or send. If it could, this app would
+quietly contradict its own thesis — a system about a human deciding what
+gets sent, built by giving the AI a shortcut around that exact decision.
+Read/navigate/suggest is the assistant's job. Approve/send stays a mouse
+click, always.
+
+When used ahead of drafting a specific letter, the conversation collects
+what the API cannot supply and a model should not guess (how well the
+staffer knows this donor, anything worth mentioning, tone) — the same
+constraint as before still holds: **if the API already knows something,
+the app does not ask.**
 
 ### 4. The draft
 
@@ -137,13 +154,8 @@ The draft does not send. It sits in an editor with three actions: **edit, approv
 
 This is the product. Everything above it is setup.
 
-### 6. Write-back
-
-On approve, log a `LoggedEmail` activity against the donor via the API — dry-run first, then commit with an idempotency key.
-
-Two reasons this closes the loop properly. It means the next person to open that donor's record sees they were thanked and when. And it demonstrates the write path with the two safety mechanisms their docs actually recommend, rather than firing a naive POST.
-
-Then return to the queue, count decremented.
+Write-back (logging the sent thank-you, decrementing the queue) was feature
+6 here. Cut - see [ADR-0008](docs/adr/0008-cut-write-back.md).
 
 ---
 
@@ -161,6 +173,7 @@ Fixture data must be obviously synthetic. Invented names, invented institutions,
 - A database
 - Actually sending email
 - Webhook receiving (documented in the notes, not needed here)
+- Write-back (see [ADR-0008](docs/adr/0008-cut-write-back.md))
 - Any endpoint not listed under A
 - Every scholarship or donor management feature that is not this one workflow
 
