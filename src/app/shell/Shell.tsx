@@ -21,20 +21,47 @@ export function Shell({
   onNavigate: (n: NavItem) => void;
   children: ReactNode;
 }) {
-  // Typeable today. Submitting to the model is the next piece to build -
-  // this is the shape of the assistant's entry point, not the wiring.
+  // Typeable today. Submitting to the model is the next piece to build - the
+  // panel below is honest about that rather than faking a reply, same rule
+  // as everywhere else in this app: a stubbed feature says it's stubbed.
   const [question, setQuestion] = useState('');
+  const [asked, setAsked] = useState<string | null>(null);
+
+  const submit = () => {
+    const q = question.trim();
+    if (!q) return;
+    setAsked(q);
+    setQuestion('');
+  };
 
   return (
     <>
       <header className="topbar">
-        <div className="assistant-bar">
-          <span>✦</span>
-          <input
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            placeholder="Ask about a donor, a fund, or start a draft…"
-          />
+        <div className="assistant-wrap">
+          <div className="assistant-bar">
+            <span className="spark">✦</span>
+            <input
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && submit()}
+              placeholder="Ask about a donor, a fund, or start a draft…"
+            />
+          </div>
+          {asked && (
+            <div className="assistant-panel">
+              <div className="assistant-q">You asked: <b>{asked}</b></div>
+              <div className="gap">
+                <p style={{ margin: 0 }}>
+                  Not wired up yet. This is where the assistant's answer will appear,
+                  built the same way as every other screen: by calling the typed API
+                  client, never by inventing a fact.
+                </p>
+              </div>
+              <button className="ghost-btn" style={{ marginTop: 12 }} onClick={() => setAsked(null)}>
+                Close
+              </button>
+            </div>
+          )}
         </div>
         <div className="topbar-right">
           <span>🔔</span>
