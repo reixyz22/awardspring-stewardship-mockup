@@ -22,7 +22,14 @@ type Entry =
   | { kind: 'gift'; id: number; date: number; gift: Gift }
   | { kind: 'activity'; id: number; date: number; activity: DonorActivity };
 
-export function DonorDetail({ donorId, onBack }: { donorId: number; onBack: () => void }) {
+export function DonorDetail({
+  donorId, onBack, sentDonorIds, onMarkSent,
+}: {
+  donorId: number;
+  onBack: () => void;
+  sentDonorIds: Set<number>;
+  onMarkSent: (donorId: number) => void;
+}) {
   const [donor, setDonor] = useState<Donor | null>(null);
   const [entries, setEntries] = useState<Entry[]>([]);
   const [fundedStudents, setFundedStudents] = useState<AwardedStudent[]>([]);
@@ -77,8 +84,23 @@ export function DonorDetail({ donorId, onBack }: { donorId: number; onBack: () =
         </button>
       </div>
 
+      {sentDonorIds.has(donor.id) && !drafting && (
+        <div className="sent-banner" style={{ marginBottom: 18 }}>
+          <b>✓ Thanked this session.</b>
+          <p style={{ margin: '4px 0 0' }}>
+            Session-only memory, not a real record - reloading the page forgets this
+            (write-back is cut, see docs/adr/0008-cut-write-back.md).
+          </p>
+        </div>
+      )}
+
       {drafting && (
-        <DraftPanel donor={donor} fundedStudents={fundedStudents} onClose={() => setDrafting(false)} />
+        <DraftPanel
+          donor={donor}
+          fundedStudents={fundedStudents}
+          onClose={() => setDrafting(false)}
+          onSent={() => onMarkSent(donor.id)}
+        />
       )}
 
       <div style={{ display: 'grid', gridTemplateColumns: '272px 1fr', gap: 26, alignItems: 'start' }}>

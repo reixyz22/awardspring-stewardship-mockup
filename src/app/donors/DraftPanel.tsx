@@ -65,11 +65,14 @@ function buildContext(donor: Donor, fundedStudents: AwardedStudent[]): string {
 }
 
 export function DraftPanel({
-  donor, fundedStudents, onClose,
+  donor, fundedStudents, onClose, onSent,
 }: {
   donor: Donor;
   fundedStudents: AwardedStudent[];
   onClose: () => void;
+  /** Fires on confirmed send - session-only "mark as thanked" memory, not
+   * a write. See the comment on sentDonorIds in main.tsx. */
+  onSent: () => void;
 }) {
   const [familiarity, setFamiliarity] = useState('somewhat');
   const [tone, setTone] = useState('warm');
@@ -173,7 +176,7 @@ export function DraftPanel({
         <>
           <p>Send this thank-you to <b>{name}</b>? This can't be undone.</p>
           <div style={{ display: 'flex', gap: 10 }}>
-            <button className="btn-approve" onClick={() => setFlow({ phase: 'sent' })}>Confirm send</button>
+            <button className="btn-approve" onClick={() => { onSent(); setFlow({ phase: 'sent' }); }}>Confirm send</button>
             <button className="ghost-btn" onClick={() => setFlow({ phase: 'review', text: flow.text, facts, editing: false })}>Cancel</button>
           </div>
         </>

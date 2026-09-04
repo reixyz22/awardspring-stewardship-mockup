@@ -22,7 +22,15 @@ import { displayName, longDate, money } from '../../lib/format.ts';
  */
 interface QueueRow { donor: DonorListItem; gifts: Gift[] }
 
-export function Queue({ onOpen }: { onOpen: (donorId: number) => void }) {
+export function Queue({
+  onOpen, sentDonorIds,
+}: {
+  onOpen: (donorId: number) => void;
+  /** Session-only "approved this browser session" memory - see main.tsx.
+   * Filtered at render, not at fetch, so approving one and coming straight
+   * back updates the count without a re-fetch. */
+  sentDonorIds: Set<number>;
+}) {
   const [rows, setRows] = useState<QueueRow[] | null>(null);
   const [requests, setRequests] = useState(0);
   const [cutoffLabel, setCutoffLabel] = useState('');
@@ -58,17 +66,19 @@ export function Queue({ onOpen }: { onOpen: (donorId: number) => void }) {
 
   if (rows === null) return <p className="sub">Loading…</p>;
 
+  const visibleRows = rows.filter((r) => !sentDonorIds.has(r.donor.id));
+
   return (
     <>
       <h1 className="h1">Queue</h1>
       <p className="sub">
-        {rows.length} donor{rows.length === 1 ? '' : 's'} gave since {cutoffLabel} with no logged acknowledgement yet.
+        {visibleRows.length} donor{visibleRows.length === 1 ? '' : 's'} gave since {cutoffLabel} with no logged acknowledgement yet.
       </p>
 
       <table className="donors">
         <thead><tr><th>Donor</th><th>Gift</th><th className="num">Total</th><th>Most recent</th></tr></thead>
         <tbody>
-          {rows.map(({ donor, gifts }) => (
+          {visibleRows.map(({ donor, gifts }) => (
             <tr key={donor.id} onClick={() => onOpen(donor.id)}>
               <td className="name">{displayName(donor)}</td>
               <td style={{ color: '#7c8a9d' }}>{gifts.length === 1 ? gifts[0].subject ?? '--' : `${gifts.length} gifts`}</td>
