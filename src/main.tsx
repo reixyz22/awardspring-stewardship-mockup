@@ -22,7 +22,6 @@ function App() {
       {nav === 'Donors' && donorId === null && <DonorList onOpen={setDonorId} />}
       {nav === 'Donors' && donorId !== null && <DonorDetail donorId={donorId} onBack={() => setDonorId(null)} />}
       {nav === 'Reports' && <Reports />}
-      {nav !== 'Dashboard' && nav !== 'Donors' && nav !== 'Reports' && <p className="sub">Not built yet.</p>}
     </Shell>
   );
 }

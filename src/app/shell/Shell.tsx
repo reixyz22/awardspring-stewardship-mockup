@@ -11,7 +11,7 @@
  */
 import type { ReactNode } from 'react';
 
-export const NAV = ['Dashboard', 'Scholarships', 'Funds', 'Applicants', 'Donors', 'Reports'] as const;
+export const NAV = ['Dashboard', 'Donors', 'Reports'] as const;
 export type NavItem = (typeof NAV)[number];
 
 export function Shell({
