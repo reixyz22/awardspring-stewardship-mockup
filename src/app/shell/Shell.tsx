@@ -10,9 +10,15 @@
  * and the UI does not pretend otherwise.
  */
 import { useState, type ReactNode } from 'react';
+import { askAssistant, type AssistantToolCall } from '../../api/assistant.ts';
 
 export const NAV = ['Dashboard', 'Donors', 'Reports'] as const;
 export type NavItem = (typeof NAV)[number];
+
+type Exchange =
+  | { status: 'loading'; question: string }
+  | { status: 'done'; question: string; text: string; toolCalls: AssistantToolCall[] }
+  | { status: 'error'; question: string; message: string };
 
 export function Shell({
   active, onNavigate, children,
@@ -21,17 +27,20 @@ export function Shell({
   onNavigate: (n: NavItem) => void;
   children: ReactNode;
 }) {
-  // Typeable today. Submitting to the model is the next piece to build - the
-  // panel below is honest about that rather than faking a reply, same rule
-  // as everywhere else in this app: a stubbed feature says it's stubbed.
   const [question, setQuestion] = useState('');
-  const [asked, setAsked] = useState<string | null>(null);
+  const [exchange, setExchange] = useState<Exchange | null>(null);
 
-  const submit = () => {
+  const submit = async () => {
     const q = question.trim();
     if (!q) return;
-    setAsked(q);
     setQuestion('');
+    setExchange({ status: 'loading', question: q });
+    try {
+      const { text, toolCalls } = await askAssistant(q);
+      setExchange({ status: 'done', question: q, text, toolCalls });
+    } catch (err) {
+      setExchange({ status: 'error', question: q, message: err instanceof Error ? err.message : String(err) });
+    }
   };
 
   return (
@@ -47,17 +56,29 @@ export function Shell({
               placeholder="Ask about a donor, a fund, or start a draft…"
             />
           </div>
-          {asked && (
+          {exchange && (
             <div className="assistant-panel">
-              <div className="assistant-q">You asked: <b>{asked}</b></div>
-              <div className="gap">
-                <p style={{ margin: 0 }}>
-                  Not wired up yet. This is where the assistant's answer will appear,
-                  built the same way as every other screen: by calling the typed API
-                  client, never by inventing a fact.
-                </p>
-              </div>
-              <button className="ghost-btn" style={{ marginTop: 12 }} onClick={() => setAsked(null)}>
+              <div className="assistant-q">You asked: <b>{exchange.question}</b></div>
+
+              {exchange.status === 'loading' && <p className="sub" style={{ margin: 0 }}>Thinking…</p>}
+
+              {exchange.status === 'error' && (
+                <div className="gap"><p style={{ margin: 0 }}>{exchange.message}</p></div>
+              )}
+
+              {exchange.status === 'done' && (
+                <>
+                  <p style={{ margin: 0 }}>{exchange.text}</p>
+                  {exchange.toolCalls.length > 0 && (
+                    <p className="sub" style={{ marginTop: 10, marginBottom: 0 }}>
+                      Answered by calling: {exchange.toolCalls.map((t) => t.name).join(', ')} -
+                      the same API the rest of this app uses, nothing invented.
+                    </p>
+                  )}
+                </>
+              )}
+
+              <button className="ghost-btn" style={{ marginTop: 12 }} onClick={() => setExchange(null)}>
                 Close
               </button>
             </div>

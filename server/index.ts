@@ -2,8 +2,7 @@
  * One process, two route trees, kept strictly apart.
  *
  *   /api/v1/*   the AwardSpring mock. Contains nothing that knows this app exists.
- *   /_local/*   this app's own backend (model proxy, mocked email). Not built yet -
- *               it arrives with the assistant.
+ *   /_local/*   this app's own backend - the Gemini-backed assistant.
  *
  * The split is what makes the README's claim literally true rather than a boast:
  * point AWARDSPRING_BASE_URL at https://api.awardspring.com and /api/v1 goes away
@@ -16,6 +15,12 @@ import { sendError } from './awardspring/conventions/errors.ts';
 import { donorsRouter } from './awardspring/routes/donors.ts';
 import { giftsRouter } from './awardspring/routes/gifts.ts';
 import { catalogRouter } from './awardspring/routes/catalog.ts';
+import { askAssistant } from './local/assistant.ts';
+
+// Vite loads .env automatically for the browser; this plain Node process
+// does not, so it's loaded explicitly. Node's own loader (20.6+), not the
+// dotenv package - one less dependency for something this small.
+try { process.loadEnvFile(); } catch { /* no .env yet - /_local routes will say so */ }
 
 const PORT = Number(process.env.MOCK_PORT ?? 8787);
 const app = express();
@@ -63,6 +68,16 @@ app.use('/api', (_req, res) =>
   sendError(res, 404, 'invalid_request_error', 'not_found', 'No such endpoint.', {
     recovery: 'Check the path against https://docs.awardspring.com/llms.txt',
   }));
+
+app.post('/_local/assistant', async (req, res) => {
+  const message = typeof req.body?.message === 'string' ? req.body.message.trim() : '';
+  if (!message) return res.status(400).json({ error: 'message is required' });
+  try {
+    res.json(await askAssistant(message));
+  } catch (err) {
+    res.status(502).json({ error: err instanceof Error ? err.message : String(err) });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`AwardSpring mock listening on http://localhost:${PORT}/api/v1`);
