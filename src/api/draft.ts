@@ -1,4 +1,5 @@
-const BASE = import.meta.env.VITE_AWARDSPRING_BASE_URL ?? 'http://localhost:8787';
+// Empty string = same-origin - see the comment in src/api/client.ts.
+const BASE = import.meta.env.VITE_AWARDSPRING_BASE_URL ?? '';
 
 export interface DraftRequest {
   donorName: string;

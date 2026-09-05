@@ -15,7 +15,14 @@
  */
 import type { ListResponse } from './types.ts';
 
-const BASE = import.meta.env.VITE_AWARDSPRING_BASE_URL ?? 'http://localhost:8787';
+// Empty string = same-origin. Correct in production, where the frontend and
+// the mock/assistant are one Vercel deployment. Local dev overrides this
+// explicitly via .env (VITE_AWARDSPRING_BASE_URL=http://localhost:8787,
+// since Vite runs on :5173 and the mock on :8787 - genuinely different
+// origins there). This used to default to localhost, which meant a real
+// deployed site with no env var set tried to fetch the VISITOR's own
+// machine - found live after the first Vercel deploy.
+const BASE = import.meta.env.VITE_AWARDSPRING_BASE_URL ?? '';
 const KEY = import.meta.env.VITE_AWARDSPRING_API_KEY ?? 'mock_key_not_a_real_credential';
 
 export class ApiError extends Error {

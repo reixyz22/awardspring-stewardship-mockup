@@ -2,7 +2,8 @@
  * Talks to /_local/assistant - our own backend, not AwardSpring's mock.
  * Same origin as the mock (VITE_AWARDSPRING_BASE_URL), different prefix.
  */
-const BASE = import.meta.env.VITE_AWARDSPRING_BASE_URL ?? 'http://localhost:8787';
+// Empty string = same-origin - see the comment in src/api/client.ts.
+const BASE = import.meta.env.VITE_AWARDSPRING_BASE_URL ?? '';
 
 export interface AssistantToolCall { name: string; args: Record<string, unknown> }
 export interface AssistantAnswer { text: string; toolCalls: AssistantToolCall[] }
